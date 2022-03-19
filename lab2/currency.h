@@ -22,16 +22,17 @@ public:
         return std::accumulate(values.begin(), values.end(), 0.0) / double(values.size());
     }
 
-    double get_median() {
-        std::sort(values.begin(), values.end());
-        size_t sz = values.size();
-        return sz % 2 ? values[sz/2] : (values[(sz/2)-1] + values[sz/2])/2;
+    double get_median() const {
+        std::vector<double> temp(values);
+        std::sort(temp.begin(), temp.end());
+        size_t sz = temp.size();
+        return sz % 2 ? temp[sz/2] : (temp[(sz/2)-1] + temp[sz/2])/2;
     }
 
     std::string get_char_code() { return char_code; }
     std::string get_name() { return name; }
-    int get_nominal() { return nominal; }
-    double get_latest_value() { return values.back(); }
+    int get_nominal() const { return nominal; }
+    double get_latest_value() const { return values.back(); }
 
 private:
     std::string char_code;
