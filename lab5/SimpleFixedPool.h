@@ -50,6 +50,7 @@ public:
 
     pointer allocate(size_t n) {
         if (n != 1 || next_free == nullptr) {
+            std::cerr << "n is 1 or nullptr\n";
             throw std::bad_alloc();
         }
 

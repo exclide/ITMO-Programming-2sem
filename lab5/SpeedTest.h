@@ -13,12 +13,9 @@ const size_t iters = 2000000;
 
 using type = int;
 using FastAlloc = ArenaFixedPool<type>;
-using FastMapAlloc = ArenaFixedPool<pair<const type,type>>;
-
 using FixedAlloc = SimpleFixedPool<type, iters>;
-using FixedMapAlloc = SimpleFixedPool<pair<const type, type>, iters>;
 
-#define FIXED_ALLOC 0
+#define FIXED_ALLOC 1
 
 #if FIXED_ALLOC == 1
 using CurAlloc = FixedAlloc;
@@ -29,6 +26,10 @@ using CurAlloc = FastAlloc;
 #define BEGIN(str) {cout << str; start = tclock::now();}
 #define END cout << std::chrono::duration_cast<std::chrono::microseconds>(tclock::now() - start).count() << endl;
 #define LOOP for (int i = 0; i < iters; i++)
+
+struct CustomType {
+    long long t;
+};
 
 void SpeedTest() {
 #if FIXED_ALLOC == 0
@@ -53,6 +54,12 @@ void SpeedTest() {
     BEGIN("Set Std: ") LOOP { set1.insert(i); }; set1.clear(); LOOP { set1.insert(i); } END
     BEGIN("Set Pool: ") LOOP { set2.insert(i); }; set2.clear(); LOOP { set2.insert(i); } END
 
+    std::allocator<CustomType> alloc;
+    SimpleFixedPool<CustomType, iters> fast_alloc;
+    vector<CustomType*> vec_al;
+    BEGIN("Custom Std: ") LOOP { CustomType* ptr = alloc.allocate(1); vec_al.push_back(ptr); } LOOP { alloc.deallocate(vec_al[i], 1); } END;
+    vec_al.clear();
+    BEGIN("Custom Pool: ") LOOP { CustomType* ptr = fast_alloc.allocate(1); vec_al.push_back(ptr); } LOOP { fast_alloc.deallocate(vec_al[i], 1); } END;
 
 
 
